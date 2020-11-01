@@ -1,17 +1,17 @@
 openapi: 3.0.0
 info:
-  version: 1.1.0.alpha-2
+  version: 1.1.1
   title: Namf_Communication
   description: |
     AMF Communication Service
-    © 2019, 3GPP Organizational Partners (ARIB, ATIS, CCSA, ETSI, TSDSI, TTA, TTC).
+    © 2020, 3GPP Organizational Partners (ARIB, ATIS, CCSA, ETSI, TSDSI, TTA, TTC).
     All rights reserved.
 security:
   - {}
   - oAuth2ClientCredentials:
       - namf-comm
 externalDocs:
-  description: 3GPP TS 29.518 V16.1.0; 5G System; Access and Mobility Management Services
+  description: 3GPP TS 29.518 V16.5.0; 5G System; Access and Mobility Management Services
   url: 'http://www.3gpp.org/ftp/Specs/archive/29_series/29.518/'
 servers:
   - url: '{apiRoot}/namf-comm/v1'
@@ -33,7 +33,7 @@ paths:
           required: true
           schema:
             type: string
-            pattern: '^(5g-guti-[0-9]{5,6}[0-9a-fA-F]{14}|imsi-[0-9]{5,15}|nai-.+|imei-[0-9]{15}|imeisv-[0-9]{16}|.+)$'
+            pattern: '^(5g-guti-[0-9]{5,6}[0-9a-fA-F]{14}|imsi-[0-9]{5,15}|nai-.+|gli-.+|gci-.+|imei-[0-9]{15}|imeisv-[0-9]{16}|.+)$'
       requestBody:
         content:
           multipart/related:  # message with binary body part(s)
@@ -434,6 +434,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UeContextCreateError'
+            multipart/related:  # message with binary body part(s)
+              schema:
+                type: object
+                properties: # Response parts
+                  jsonData:
+                    $ref: '#/components/schemas/UeContextCreateError'
+                  binaryDataN2Information:
+                    type: string
+                    format: binary
+              encoding:
+                jsonData:
+                  contentType:  application/json
+                binaryDataN2Information:
+                  contentType:  application/vnd.3gpp.ngap
+                  headers:
+                    Content-Id:
+                      schema:
+                        type: string
         '411':
           $ref: 'TS29571_CommonData.yaml#/components/responses/411'
         '413':
@@ -465,7 +483,7 @@ paths:
           required: true
           schema:
             type: string
-            pattern: '^(5g-guti-[0-9]{5,6}[0-9a-fA-F]{14}|imsi-[0-9]{5,15}|nai-.+|imei-[0-9]{15}|imeisv-[0-9]{16}|.+)$'
+            pattern: '^(5g-guti-[0-9]{5,6}[0-9a-fA-F]{14}|imsi-[0-9]{5,15}|nai-.+|gli-.+|gci-.+|imei-[0-9]{15}|imeisv-[0-9]{16}|.+)$'
       requestBody:
         content:
           application/json:
@@ -508,7 +526,7 @@ paths:
           required: true
           schema:
             type: string
-            pattern: '^(5g-guti-[0-9]{5,6}[0-9a-fA-F]{14}|imsi-[0-9]{5,15}|nai-.+|imei-[0-9]{15}|imeisv-[0-9]{16}|.+)$'
+            pattern: '^(5g-guti-[0-9]{5,6}[0-9a-fA-F]{14}|imsi-[0-9]{5,15}|nai-.+|gli-.+|gci-.+|imei-[0-9]{15}|imeisv-[0-9]{16}|.+)$'
       requestBody:
         content:
           application/json:
@@ -530,6 +548,12 @@ paths:
                 $ref: '#/components/schemas/AssignEbiError'
         '403':
           description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssignEbiError'
+        '409':
+          description: Conflict
           content:
             application/json:
               schema:
@@ -565,7 +589,7 @@ paths:
           required: true
           schema:
             type: string
-            pattern: '^(5g-guti-[0-9]{5,6}[0-9a-fA-F]{14}|imsi-[0-9]{5,15}|nai-.+|imei-[0-9]{15}|imeisv-[0-9]{16}|.+)$'
+            pattern: '^(5g-guti-[0-9]{5,6}[0-9a-fA-F]{14}|imsi-[0-9]{5,15}|nai-.+|gli-.+|gci-.+|imei-[0-9]{15}|imeisv-[0-9]{16}|.+)$'
       requestBody:
         content:
           application/json:
@@ -657,7 +681,7 @@ paths:
           required: true
           schema:
             type: string
-            pattern: '^(5g-guti-[0-9]{5,6}[0-9a-fA-F]{14}|imsi-[0-9]{5,15}|nai-.+|imei-[0-9]{15}|imeisv-[0-9]{16}|.+)$'
+            pattern: '^(5g-guti-[0-9]{5,6}[0-9a-fA-F]{14}|imsi-[0-9]{5,15}|nai-.+|gli-.+|gci-.+|imei-[0-9]{15}|imeisv-[0-9]{16}|.+)$'
       requestBody:
         content:
           application/json:
@@ -704,7 +728,7 @@ paths:
           required: true
           schema:
             type: string
-            pattern: '^(imsi-[0-9]{5,15}|nai-.+|imei-[0-9]{15}|imeisv-[0-9]{16}|cid-.{1,255}|.+)$'
+            pattern: '^(imsi-[0-9]{5,15}|nai-.+|gli-.+|gci-.+|imei-[0-9]{15}|imeisv-[0-9]{16}|cid-.{1,255}|.+)$'
       requestBody:
         content:
           application/json:
@@ -722,6 +746,9 @@ paths:
                 binaryDataN2Information:
                   type: string
                   format: binary
+                binaryMtData:
+                  type: string
+                  format: binary
             encoding:
               jsonData:
                 contentType:  application/json
@@ -733,6 +760,12 @@ paths:
                       type: string
               binaryDataN2Information:
                 contentType:  application/vnd.3gpp.ngap
+                headers:
+                  Content-Id:
+                    schema:
+                      type: string
+              binaryMtData:
+                contentType:  application/vnd.3gpp.5gnas
                 headers:
                   Content-Id:
                     schema:
@@ -845,7 +878,7 @@ paths:
           required: true
           schema:
             type: string
-            pattern: '^(5g-guti-[0-9]{5,6}[0-9a-fA-F]{14}|imsi-[0-9]{5,15}|nai-.+|imei-[0-9]{15}|imeisv-[0-9]{16}|.+)$'
+            pattern: '^(5g-guti-[0-9]{5,6}[0-9a-fA-F]{14}|imsi-[0-9]{5,15}|nai-.+|gli-.+|gci-.+|imei-[0-9]{15}|imeisv-[0-9]{16}|.+)$'
       requestBody:
         content:
           application/json:
@@ -936,7 +969,7 @@ paths:
                 - N2 Info Notify
               operationId: N2InfoNotify
               requestBody:
-                description: UE Specific N2 Informaiton Notification
+                description: UE Specific N2 Information Notification
                 content:
                   multipart/related:  # message with binary body part(s)
                     schema:
@@ -995,7 +1028,7 @@ paths:
           required: true
           schema:
             type: string
-            pattern: '^(5g-guti-[0-9]{5,6}[0-9a-fA-F]{14}|imsi-[0-9]{5,15}|nai-.+|imei-[0-9]{15}|imeisv-[0-9]{16}|.+)$'
+            pattern: '^(5g-guti-[0-9]{5,6}[0-9a-fA-F]{14}|imsi-[0-9]{5,15}|nai-.+|gli-.+|gci-.+|imei-[0-9]{15}|imeisv-[0-9]{16}|.+)$'
         - name: subscriptionId
           in: path
           description: Subscription Identifier
@@ -1148,7 +1181,7 @@ paths:
                 - Non UE N2 Info Notify
               operationId: NonUeN2InfoNotify
               requestBody:
-                description: Non UE N2 Informaiton Notification
+                description: Non UE N2 Information Notification
                 content:
                   application/json:
                     schema:
@@ -1520,16 +1553,6 @@ components:
           minItems: 1
         ratSelector:
           $ref: '#/components/schemas/RatSelector'
-        ecgiList:
-          type: array
-          items:
-            $ref: 'TS29571_CommonData.yaml#/components/schemas/Ecgi'
-          minItems: 1
-        ncgiList:
-          type: array
-          items:
-            $ref: 'TS29571_CommonData.yaml#/components/schemas/Ncgi'
-          minItems: 1
         globalRanNodeList:
           type: array
           items:
@@ -1572,6 +1595,8 @@ components:
           type: string
         supportedFeatures:
           $ref: 'TS29571_CommonData.yaml#/components/schemas/SupportedFeatures'
+        n2InformationClass:
+          $ref: '#/components/schemas/N2InformationClass'
       required:
         - n2NotifySubscriptionId
     UeN1N2InfoSubscriptionCreateData:
@@ -1616,8 +1641,11 @@ components:
           $ref: 'TS29572_Nlmf_Location.yaml#/components/schemas/CorrelationID'
         notifyReason:
           $ref: '#/components/schemas/N2InfoNotifyReason'
-        smfChangeInd:
-          $ref: '#/components/schemas/SmfChangeIndication'
+        smfChangeInfoList:
+          type: array
+          items:
+            $ref: '#/components/schemas/SmfChangeInfo'
+          minItems: 1
         ranNodeId:
           $ref: 'TS29571_CommonData.yaml#/components/schemas/GlobalRanNodeId'
         initialAmfName:
@@ -1626,6 +1654,11 @@ components:
           $ref: 'TS29571_CommonData.yaml#/components/schemas/Ipv4Addr'
         anN2IPv6Addr:
           $ref: 'TS29571_CommonData.yaml#/components/schemas/Ipv6Addr'
+        guami:
+          $ref: 'TS29571_CommonData.yaml#/components/schemas/Guami'
+        notifySourceNgRan:
+          type: boolean
+          default: false
       required:
         - n2NotifySubscriptionId
     N2InfoContainer:
@@ -1641,6 +1674,8 @@ components:
           $ref: '#/components/schemas/NrppaInformation'
         pwsInfo:
           $ref: '#/components/schemas/PwsInformation'
+        v2xInfo:
+          $ref: '#/components/schemas/V2xInformation'
       required:
         - n2InformationClass
     N1MessageNotification:
@@ -1654,6 +1689,13 @@ components:
           $ref: 'TS29572_Nlmf_Location.yaml#/components/schemas/CorrelationID'
         registrationCtxtContainer:
           $ref: '#/components/schemas/RegistrationContextContainer'
+        newLmfIdentification:
+          $ref: 'TS29572_Nlmf_Location.yaml#/components/schemas/LMFIdentification'
+        guami:
+          $ref: 'TS29571_CommonData.yaml#/components/schemas/Guami'
+        cIoT5GSOptimisation:
+          type: boolean
+          default: false
       required:
         - n1MessageContainer
     N1MessageContainer:
@@ -1677,6 +1719,8 @@ components:
           $ref: '#/components/schemas/N1MessageContainer'
         n2InfoContainer:
           $ref: '#/components/schemas/N2InfoContainer'
+        mtData:
+          $ref: 'TS29571_CommonData.yaml#/components/schemas/RefToBinaryData'
         skipInd:
           type: boolean
           default: false
@@ -1703,9 +1747,15 @@ components:
           $ref: 'TS29571_CommonData.yaml#/components/schemas/SupportedFeatures'
         oldGuami:
           $ref: 'TS29571_CommonData.yaml#/components/schemas/Guami'
+        maAcceptedInd:
+          type: boolean
+          default: false
         extBufSupport:
           type: boolean
           default: false
+        targetAccess:
+          $ref: 'TS29571_CommonData.yaml#/components/schemas/AccessType'
+
     N1N2MessageTransferRspData:
       type: object
       properties:
@@ -1738,6 +1788,8 @@ components:
         ueContextRequest:
           type: boolean
           default:  false
+        initialAmfN2ApId:
+          type: integer
         anN2IPv4Addr:
           $ref: 'TS29571_CommonData.yaml#/components/schemas/Ipv4Addr'
         anN2IPv6Addr:
@@ -1823,6 +1875,8 @@ components:
           $ref: 'TS29571_CommonData.yaml#/components/schemas/NfGroupId'
         ausfGroupId:
           $ref: 'TS29571_CommonData.yaml#/components/schemas/NfGroupId'
+        pcfGroupId:
+          $ref: 'TS29571_CommonData.yaml#/components/schemas/NfGroupId'
         routingIndicator:
           type: string
         groupList:
@@ -1838,8 +1892,6 @@ components:
           $ref: 'TS29571_CommonData.yaml#/components/schemas/RfspIndex'
         subUeAmbr:
           $ref: 'TS29571_CommonData.yaml#/components/schemas/Ambr'
-        smsSupport:
-          $ref: '#/components/schemas/SmsSupport'
         smsfId:
           $ref: 'TS29571_CommonData.yaml#/components/schemas/NfInstanceId'
         seafData:
@@ -1848,6 +1900,14 @@ components:
           $ref: '#/components/schemas/5GMmCapability'
         pcfId:
           $ref: 'TS29571_CommonData.yaml#/components/schemas/NfInstanceId'
+        pcfSetId:
+          $ref: 'TS29571_CommonData.yaml#/components/schemas/NfSetId'
+        pcfAmpServiceSetId:
+          $ref: 'TS29571_CommonData.yaml#/components/schemas/NfServiceSetId'
+        pcfUepServiceSetId:
+          $ref: 'TS29571_CommonData.yaml#/components/schemas/NfServiceSetId'
+        pcfBinding:
+          $ref: '#/components/schemas/SbiBindingLevel'
         pcfAmPolicyUri:
           $ref: 'TS29571_CommonData.yaml#/components/schemas/Uri'
         amPolicyReqTriggerList:
@@ -1917,6 +1977,30 @@ components:
           items:
             $ref: '#/components/schemas/SmallDataRateStatusInfo'
           minItems: 1
+        restrictedPrimaryRatList:
+          type: array
+          items:
+            $ref: 'TS29571_CommonData.yaml#/components/schemas/RatType'
+          minItems: 1
+        restrictedSecondaryRatList:
+          type: array
+          items:
+            $ref: 'TS29571_CommonData.yaml#/components/schemas/RatType'
+          minItems: 1
+        v2xContext:
+          $ref: '#/components/schemas/V2xContext'
+        lteCatMInd:
+          type: boolean
+          default: false
+        moExpDataCounter:
+          $ref: 'TS29571_CommonData.yaml#/components/schemas/MoExpDataCounter'
+        cagData:
+          $ref: 'TS29503_Nudm_SDM.yaml#/components/schemas/CagData'
+        managementMdtInd:
+          type: boolean
+          default: false
+        immediateMdtConf:
+          $ref: '#/components/schemas/ImmediateMdtConf'
     N2SmInformation:
       type: object
       properties:
@@ -1964,6 +2048,11 @@ components:
           $ref: 'TS29571_CommonData.yaml#/components/schemas/Uint16'
         pwsContainer:
           $ref: '#/components/schemas/N2InfoContent'
+        bcEmptyAreaList:
+          type: array
+          items:
+            $ref: 'TS29571_CommonData.yaml#/components/schemas/GlobalRanNodeId'
+          minItems: 1
         sendRanResponse:
           type: boolean
           default: false
@@ -2019,6 +2108,8 @@ components:
           $ref: 'TS29571_CommonData.yaml#/components/schemas/AccessType'
         nasSecurityMode:
           $ref: '#/components/schemas/NasSecurityMode'
+        epsNasSecurityMode:
+          $ref: '#/components/schemas/EpsNasSecurityMode'
         nasDownlinkCount:
           $ref: '#/components/schemas/NasCount'
         nasUplinkCount:
@@ -2037,6 +2128,11 @@ components:
           items:
             $ref: '#/components/schemas/NssaiMapping'
           minItems: 1
+        allowedHomeNssai:
+          type: array
+          items:
+            $ref: 'TS29571_CommonData.yaml#/components/schemas/Snssai'
+          minItems: 1
         nsInstanceList:
           type: array
           items:
@@ -2044,6 +2140,30 @@ components:
           minItems: 1
         expectedUEbehavior:
           $ref: '#/components/schemas/ExpectedUeBehavior'
+        plmnAssiUeRadioCapId:
+          $ref: 'TS29571_CommonData.yaml#/components/schemas/PlmnAssiUeRadioCapId'
+        manAssiUeRadioCapId:
+          $ref: 'TS29571_CommonData.yaml#/components/schemas/ManAssiUeRadioCapId'
+        ucmfDicEntryId:
+          type: string
+        n3IwfId:
+          $ref: 'TS29571_CommonData.yaml#/components/schemas/GlobalRanNodeId'
+        wagfId:
+          $ref: 'TS29571_CommonData.yaml#/components/schemas/GlobalRanNodeId'
+        tngfId:
+          $ref: 'TS29571_CommonData.yaml#/components/schemas/GlobalRanNodeId'
+        anN2ApId:
+          type: integer
+        nssaaStatusList:
+          type: array
+          items:
+            $ref: 'TS29571_CommonData.yaml#/components/schemas/NssaaStatus'
+          minItems: 1
+        pendingNssaiMappingList:
+          type: array
+          items:
+            $ref: '#/components/schemas/NssaiMapping'
+          minItems: 1
       required:
         - accessType
     SeafData:
@@ -2090,6 +2210,8 @@ components:
           $ref: 'TS29571_CommonData.yaml#/components/schemas/Dnn'
         accessType:
           $ref: 'TS29571_CommonData.yaml#/components/schemas/AccessType'
+        additionalAccessType:
+          $ref: 'TS29571_CommonData.yaml#/components/schemas/AccessType'
         allocatedEbiList:
           type: array
           items:
@@ -2097,10 +2219,28 @@ components:
           minItems: 1
         hsmfId:
           $ref: 'TS29571_CommonData.yaml#/components/schemas/NfInstanceId'
+        hsmfSetId:
+          $ref: 'TS29571_CommonData.yaml#/components/schemas/NfSetId'
+        hsmfServiceSetId:
+          $ref: 'TS29571_CommonData.yaml#/components/schemas/NfServiceSetId'
+        smfBinding:
+          $ref: '#/components/schemas/SbiBindingLevel'
         vsmfId:
           $ref: 'TS29571_CommonData.yaml#/components/schemas/NfInstanceId'
+        vsmfSetId:
+          $ref: 'TS29571_CommonData.yaml#/components/schemas/NfSetId'
+        vsmfServiceSetId:
+          $ref: 'TS29571_CommonData.yaml#/components/schemas/NfServiceSetId'
+        vsmfBinding:
+          $ref: '#/components/schemas/SbiBindingLevel'
         ismfId:
           $ref: 'TS29571_CommonData.yaml#/components/schemas/NfInstanceId'
+        ismfSetId:
+          $ref: 'TS29571_CommonData.yaml#/components/schemas/NfSetId'
+        ismfServiceSetId:
+          $ref: 'TS29571_CommonData.yaml#/components/schemas/NfServiceSetId'
+        ismfBinding:
+          $ref: '#/components/schemas/SbiBindingLevel'
         nsInstance:
           $ref: 'TS29531_Nnssf_NSSelection.yaml#/components/schemas/NsiId'
         smfServiceInstanceId:
@@ -2108,6 +2248,8 @@ components:
         maPduSession:
           type: boolean
           default: false
+        cnAssistedRanPara:
+          $ref: 'TS29502_Nsmf_PDUSession.yaml#/components/schemas/CnAssistedRanPara'
       required:
         - pduSessionId
         - smContextRef
@@ -2136,6 +2278,11 @@ components:
           minItems: 1
         pcfReselectedInd:
           type: boolean
+        smfChangeInfoList:
+          type: array
+          items:
+            $ref: '#/components/schemas/SmfChangeInfo'
+          minItems: 1
       required:
         - transferStatus
     UeRegStatusUpdateRspData:
@@ -2216,6 +2363,8 @@ components:
           $ref: 'TS29571_CommonData.yaml#/components/schemas/ProblemDetails'
         ngapCause:
           $ref: 'TS29571_CommonData.yaml#/components/schemas/NgApCause'
+        targetToSourceFailureData:
+          $ref: '#/components/schemas/N2InfoContent'
       required:
         - error
     NgRanTargetId:
@@ -2258,7 +2407,7 @@ components:
       properties:
         error:
           $ref: 'TS29571_CommonData.yaml#/components/schemas/ProblemDetails'
-        pwdErrorInfo:
+        pwsErrorInfo:
           $ref: '#/components/schemas/PWSErrorData'
       required:
         - error
@@ -2322,6 +2471,100 @@ components:
         - Snssai
         - Dnn
         - SmallDataRateStatus
+    SmfChangeInfo:
+      type: object
+      properties:
+        pduSessionIdList:
+          type: array
+          items:
+            $ref: 'TS29571_CommonData.yaml#/components/schemas/PduSessionId'
+          minItems: 1
+        smfChangeInd:
+          $ref: '#/components/schemas/SmfChangeIndication'
+      required:
+        - pduSessionIdList
+        - smfChangeInd
+
+    V2xContext:
+      type: object
+      properties:
+        nrV2xServicesAuth:
+          $ref: 'TS29571_CommonData.yaml#/components/schemas/NrV2xAuth'
+        lteV2xServicesAuth:
+          $ref: 'TS29571_CommonData.yaml#/components/schemas/LteV2xAuth'
+        nrUeSidelinkAmbr:
+          $ref: 'TS29571_CommonData.yaml#/components/schemas/BitRate'
+        lteUeSidelinkAmbr:
+          $ref: 'TS29571_CommonData.yaml#/components/schemas/BitRate'
+        Pc5QoSPara:
+          $ref: 'TS29571_CommonData.yaml#/components/schemas/Pc5QoSPara'
+
+    V2xInformation:
+      type: object
+      properties:
+        n2Pc5Pol:
+          $ref: '#/components/schemas/N2InfoContent'
+
+    ImmediateMdtConf:
+      type: object
+      properties:
+        jobType:
+          $ref: 'TS29571_CommonData.yaml#/components/schemas/JobType'
+        measurementLteList:
+          type: array
+          items:
+            $ref: 'TS29571_CommonData.yaml#/components/schemas/MeasurementLteForMdt'
+          minItems: 1
+        measurementNrList:
+          type: array
+          items:
+            $ref: 'TS29571_CommonData.yaml#/components/schemas/MeasurementNrForMdt'
+          minItems: 1
+        reportingTriggerList:
+          type: array
+          items:
+            $ref: 'TS29571_CommonData.yaml#/components/schemas/ReportingTrigger'
+          minItems: 1
+        reportInterval:
+          $ref: 'TS29571_CommonData.yaml#/components/schemas/ReportIntervalMdt'
+        reportAmount:
+          $ref: 'TS29571_CommonData.yaml#/components/schemas/ReportAmountMdt'
+        eventThresholdRsrp:
+          type: integer
+          minimum: 0
+          maximum: 97
+        eventThresholdRsrq:
+          type: integer
+          minimum: 0
+          maximum: 34
+        collectionPeriodRmmLte:
+          $ref: 'TS29571_CommonData.yaml#/components/schemas/CollectionPeriodRmmLteMdt'
+        measurementPeriodLte:
+          $ref: 'TS29571_CommonData.yaml#/components/schemas/MeasurementPeriodLteMdt'
+        areaScope:
+          $ref: 'TS29571_CommonData.yaml#/components/schemas/AreaScope'
+        positioningMethod:
+          $ref: 'TS29571_CommonData.yaml#/components/schemas/PositioningMethodMdt'
+        mdtAllowedPlmnIdList:
+          type: array
+          items:
+            $ref: 'TS29571_CommonData.yaml#/components/schemas/PlmnId'
+          minItems: 1
+          maxItems: 16
+      required:
+        - jobType
+
+    EpsNasSecurityMode:
+      type: object
+      properties:
+        integrityAlgorithm:
+          $ref: '#/components/schemas/EpsNasIntegrityAlgorithm'
+        cipheringAlgorithm:
+          $ref: '#/components/schemas/EpsNasCipheringAlgorithm'
+      required:
+        - integrityAlgorithm
+        - cipheringAlgorithm
+
 #
 # SIMPLE DATA TYPES
 #
@@ -2370,6 +2613,7 @@ components:
           - PWS-BCAL
           - PWS-RF
           - RAN
+          - V2X
       - type: string
     N1MessageClass:
       anyOf:
@@ -2380,6 +2624,7 @@ components:
           - LPP
           - SMS
           - UPDP
+          - LCS
       - type: string
     N1N2MessageTransferCause:
       anyOf:
@@ -2391,6 +2636,8 @@ components:
           - UE_NOT_RESPONDING
           - N1_MSG_NOT_TRANSFERRED
           - UE_NOT_REACHABLE_FOR_SESSION
+          - TEMPORARY_REJECT_REGISTRATION_ONGOING
+          - TEMPORARY_REJECT_HANDOVER_ONGOING
       - type: string
     UeContextTransferStatus:
       anyOf:
@@ -2483,10 +2730,15 @@ components:
           - HANDOVER_PREP_FAIL
           - SRC_TO_TAR_CONTAINER
           - TAR_TO_SRC_CONTAINER
+          - TAR_TO_SRC_FAIL_CONTAINER
           - RAN_STATUS_TRANS_CONTAINER
           - SON_CONFIG_TRANSFER
           - NRPPA_PDU
           - UE_RADIO_CAPABILITY
+          - RIM_INFO_TRANSFER
+          - SECONDARY_RAT_USAGE
+          - PC5_QOS_PARA
+          - EARLY_STATUS_TRANS_CONTAINER
       - type: string
     N2InfoNotifyReason:
       anyOf:
@@ -2500,4 +2752,32 @@ components:
         enum:
           - CHANGED
           - REMOVED
+      - type: string
+    SbiBindingLevel:
+      anyOf:
+      - type: string
+        enum:
+          - NF_INSTANCE_BINDING
+          - NF_SET_BINDING
+          - NF_SERVICE_SET_BINDING
+      - type: string
+
+    EpsNasCipheringAlgorithm:
+      anyOf:
+      - type: string
+        enum:
+          - EEA0
+          - EEA1
+          - EEA2
+          - EEA3
+      - type: string
+
+    EpsNasIntegrityAlgorithm:
+      anyOf:
+      - type: string
+        enum:
+          - EIA0
+          - EIA1
+          - EIA2
+          - EIA3
       - type: string
